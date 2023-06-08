@@ -31,7 +31,7 @@ class BaseController extends Controller
       * @param string $errorMessage
       * @param int $status
       */
-     public function sendError( string $errorMessage, int $status)
+     public function sendError(string $errorMessage, int $status)
      {
         $response =[
             'message' => $errorMessage,

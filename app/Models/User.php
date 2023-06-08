@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Preference;
+use App\Models\Image;
 
 class User extends Authenticatable
 {
@@ -48,5 +49,8 @@ class User extends Authenticatable
 
     public function Preference(){
         $this->HasMany(Preference::class);
+    }
+    public function Image(){
+        $this->hasOne(Image::class);
     }
 }

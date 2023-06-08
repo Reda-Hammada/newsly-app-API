@@ -13,11 +13,16 @@ use App\Http\Controllers\API\UserController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-// Route::controller(UserController::class)->groupe(function(){
+// user routes 
+Route::controller(UserController::class)->group(function(){
+    Route::post('/register','register');
+    Route::post('/login', 'login');
     
-// });
+});
 
-// Route::middleware('auth:sanctum')->group(function(){
+Route::middleware('auth:sanctum')->group(function(){
+    Route::put('/user/{userId}',[UserController::class, 'updateUserData']);
+
+    //preferences routes 
     
-// });
+});

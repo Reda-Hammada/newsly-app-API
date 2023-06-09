@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 class Image extends Model
 {
+    protected $fillable = [
+        'image_path',
+        'user_id',
+    ];
     use HasFactory;
 
     public function user(){
-        $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 }

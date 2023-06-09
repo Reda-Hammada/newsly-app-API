@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\ImageController;
-
 use App\Models\User;
 
 class UserController extends BaseController 
@@ -39,34 +38,45 @@ class UserController extends BaseController
                             'password'=> 'string|required',
                         ]
                     );
-        if($fields):
+                    
+        if($fields){
             // create the mew user
             $user = User::create([
-                'fullname'=>$fields['fullname'],
+                'name'=>$fields['fullname'],
                 'email'=>$fields['email'],
                 'password'=>bcrypt($fields['password']),
                 
            ]);
            
             $latestUserId = $user->latest()->value('id');
-           
-             // call the store method in the image controller to pass the user fullname and id
-            $userImage =  $this->imageController->store($user->fullname, $latestUserId);
-            
-            if($user && $userImage):
-                $token = $user->createToken('myapptoken')->plainTextToken;
+          
+                
+            if($user){
+                    
+                    // call the store method in the image controller to pass the user fullname and id
+                    $this->imageController->store($user->name, $latestUserId);   
+                    
+                    $accessToken = $user->createToken('myapptoken')->plainTextToken;
 
-                $fetchUser = [
-                    'id'=> $user->id,
-                    'fullname' => $user->fullname,
-                    'email' => $user->email,
-                    'accessToken' =>$token,
-                    'imagePath'=>  $user->image->image_path
-                ];
-               
-               return $this->sendResponse($fetchUser, 'Your Account has been successfully created', 201);
-            endif;
-        endif;
+                    $fetchUser = [
+                        'id'=> $user->id,
+                        'fullname' => $user->name,
+                        'email' => $user->email,
+                        'accessToken' =>$accessToken,
+                        'imagePath'=>  $user->image->image_path
+                    ];
+                
+                return $this->sendResponse($fetchUser, 'Your Account has been successfully created', 201);
+                
+            }
+            else{
+                
+                return $this->sendError('Failed to register user', 400);
+
+                }
+
+            }
+        
     }
 
     /**
@@ -75,8 +85,55 @@ class UserController extends BaseController
 
      */
     public function login(Request $request):JsonResponse
-    {
+    {   
+        $fields = $request->validate([
+            'email' => 'string|required',
+            'password' => 'string|required',
+        ]);
         
+        
+        $User = User::where('email', $fields['email'])->first();
+
+
+        if($User):
+
+            // check if the password is right 
+            $isPasswordTrue = Hash::check($fields['password'], $User->password);
+
+           if($isPasswordTrue):
+
+                $accessToken = $User->createToken('myapptoken')->plainTextToken;
+                
+                $fetchUser = [
+                    'id' =>$User->id,
+                    'name'=>$User->name,
+                    'imagePath' => $User->image->image_path,
+                    'accessToken' => $accessToken,
+                ];
+                
+
+                return $this->sendResponse($fetchUser ,'You are being logged in ',200);
+
+           endif;
+
+
+        else:
+            return $this->sendError('Email or password invalid', 401);
+
+        endif;
+ 
+    }
+
+   /**
+    * log out user and destroy access token
+    * @param \Illuminate\Http\Request  $request
+    * @return \Illuminate\Http\Response
+    */
+
+    public function logOut(Request $request):JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+        return $this->sendResponse();
     }
     /**
      *  Update user data
@@ -86,6 +143,7 @@ class UserController extends BaseController
 
      public function updateUserData(Request $request):JsonResponse
      {
+        
      }
     
 }

@@ -8,19 +8,22 @@ class BaseController extends Controller
 {
     /**
      * return Success response
-     * @param $result
+     * @param mixed $result (optional)
      * @param string $message
      * @param int $status
      * @return \Illuminate\Http\Response
      */
 
-     public function sendResponse($result, string $message, int $status)
+     public function sendResponse($result = null, string $message, int $status)
      {
          $response =[
-                'data' =>  $result,
                 'message' => $message,
                 'status'=> $status,
         ];
+
+        if($result !== null):
+            $response['data']= $result;
+        endif;
 
         return response()->json($response);
             

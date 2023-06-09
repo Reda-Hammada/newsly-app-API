@@ -11,6 +11,6 @@ class Preference extends Model
     use HasFactory;
 
    public function User(){
-        $this->belongsTo(User::class);
+     return  $this->belongsTo(User::class);
    }
 }

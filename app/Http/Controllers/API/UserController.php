@@ -94,33 +94,36 @@ class UserController extends BaseController
         
         $User = User::where('email', $fields['email'])->first();
 
-
-        if($User):
+        if(!empty($User)):
 
             // check if the password is right 
             $isPasswordTrue = Hash::check($fields['password'], $User->password);
 
-           if($isPasswordTrue):
+           if($isPasswordTrue === true):
 
                 $accessToken = $User->createToken('myapptoken')->plainTextToken;
                 
                 $fetchUser = [
                     'id' =>$User->id,
-                    'name'=>$User->name,
+                    'fullname'=>$User->name,
+                    'email' => $User->email,
                     'imagePath' => $User->image->image_path,
                     'accessToken' => $accessToken,
                 ];
                 
 
-                return $this->sendResponse($fetchUser ,'You are being logged in ',200);
+                return $this->sendResponse($fetchUser, 'You are being logged in', 200);
+            
 
            endif;
+        
+           return $this->sendError('Email or password invalid', 401);
 
 
-        else:
-            return $this->sendError('Email or password invalid', 401);
 
         endif;
+
+
  
     }
 
@@ -133,7 +136,7 @@ class UserController extends BaseController
     public function logOut(Request $request):JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
-        return $this->sendResponse();
+        return $this->sendResponse('You have been successfully logged out', 200);
     }
     /**
      *  Update user data

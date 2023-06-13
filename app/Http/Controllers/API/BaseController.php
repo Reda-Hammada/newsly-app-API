@@ -23,7 +23,10 @@ class BaseController extends Controller
 
         if($result !== null):
             $response['data']= $result;
+        else:
+            $result = null;
         endif;
+        
 
         return response()->json($response);
             

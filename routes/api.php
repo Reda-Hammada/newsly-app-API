@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\NewsController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,6 +15,12 @@ use App\Http\Controllers\API\UserController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+// get available categories and sources
+Route::get('/categories', [NewsController::class, 'getCategories']);
+Route::get('/sources', [NewsController::class, 'getSources']);
+
+
 // user routes login & signup 
 Route::controller(UserController::class)->group(function(){
 
@@ -21,6 +29,7 @@ Route::controller(UserController::class)->group(function(){
     
     
 });
+
 
 
 // guarded APIs routes

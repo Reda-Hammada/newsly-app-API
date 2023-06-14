@@ -39,6 +39,8 @@ Route::group(['middleware'=>['auth:sanctum','throttle:90,1']],function(){
     Route::put('/user/{userId}',[UserController::class, 'updateUserData']);
     // preferences routes
     Route::post('/preferences/{userId}', [PreferenceController::class,'store']);
+    Route::get('/preferences/{userId}', [PreferenceController::class,'index']);
+
 
 
     

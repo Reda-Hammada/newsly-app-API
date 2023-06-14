@@ -18,7 +18,9 @@ class PreferenceController extends BaseController {
 
      public function index(int $userId):JsonResponse
      {
-        
+        $preferences = new Preference();
+       $dataPrefences= $preferences->where('user_id', $userId)->get();
+        return $this->sendResponse($dataPrefences,'Preferences fetched',200);
      }
 
     /**

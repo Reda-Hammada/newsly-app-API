@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\NewsController;
+use App\Http\Controllers\API\PreferenceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,8 +35,10 @@ Route::controller(UserController::class)->group(function(){
 
 // guarded APIs routes
 Route::group(['middleware'=>['auth:sanctum','throttle:90,1']],function(){
-    
+    // user protected routes
     Route::put('/user/{userId}',[UserController::class, 'updateUserData']);
+    // preferences routes
+    Route::post('/preferences/{userId}', [PreferenceController::class,'store']);
 
 
     

@@ -9,7 +9,11 @@ use App\Models\User;
 class Preference extends Model
 {
     use HasFactory;
-
+    protected $fillable = [
+      'preferred_category',
+      'preferred_source',
+      'preferred_author',
+  ];
    public function User(){
      return  $this->belongsTo(User::class);
    }

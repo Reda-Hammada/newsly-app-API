@@ -32,6 +32,18 @@ class PreferenceController extends BaseController {
      public function store(Request $request,int $userId):void
      {
         
+        
+        $userPreference = new Preference();
+        $prerefences = $userPreference->where('user_id',$userId)->get();
+        // if user already has preferences reset and add new one
+        if(!empty($prerefences)):
+                
+            $userPreference->where('user_id', $userId)->delete();
+            
+
+
+        endif;
+
         $request->validate([
             'categories'=> 'array',
             'categories.*'=>'string',
@@ -42,52 +54,46 @@ class PreferenceController extends BaseController {
             
         ]);
 
+         
+    // get categories after validating them
+    $categories = $request->input('categories');
 
-            
-            // get categories after validating them
-            $categories = $request->input('categories');
-            // loop through all categories and store them
-            if(!empty(($categories))){
-                foreach($categories as $category):
-                    $preference = new Preference();
-
-                    $preference->preferred_category = $category;
-                    $preference->user_id = $userId;
-                    $preference->save();
-                    
-            endforeach;
+    // loop through all categories and store them
+        if (!empty($categories)) {
+            foreach ($categories as $category) {
+                $preference = new Preference();
+                $preference->preferred_category = $category;
+                $preference->user_id = $userId;
+                $preference->save();
             }
-            $sources = $request->input('sources');
+        }
 
-            if (!empty($sources)) {
-                foreach ($sources as $source) {
-                    
-                    $preference = new Preference();
-
-                    $preference->preferred_source = $source;
-                    $preference->user_id = $userId;
-                    $preference->save();
-                }
+    $sources = $request->input('sources');
+        if (!empty($sources)) {
+            foreach ($sources as $source) {
+                $preference = new Preference();
+                $preference->preferred_source = $source;
+                $preference->user_id = $userId;
+                $preference->save();
             }
+        }
 
-            $authors = $request->input('authors');
-            
-            if (!empty($authors)) {
-                foreach ($authors as $author) {
-                    $preference = new Preference();
-
-                    $preference->preferred_author = $author;
-                    $preference->user_id = $userId;
-                    $preference->save();
-                }
+    $authors = $request->input('authors');
+        if (!empty($authors)) {
+            foreach ($authors as $author) {
+                $preference = new Preference();
+                $preference->preferred_author = $author;
+                $preference->user_id = $userId;
+                $preference->save();
             }
-
+        }
 
 
 
 
 
         
-     }
+    }
+
     
 }

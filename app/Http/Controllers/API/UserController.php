@@ -61,7 +61,6 @@ class UserController extends BaseController
                         'fullname' => $user->name,
                         'email' => $user->email,
                         'accessToken' =>$accessToken,
-                        'imagePath'=>   $user->image ? $user->image->image_path : false
                     ];
                 
                 return $this->sendResponse($fetchUser, 'Your Account has been successfully created', 201);
@@ -101,7 +100,6 @@ class UserController extends BaseController
                 'id' => $user->id,
                 'fullname' => $user->name,
                 'email' => $user->email,
-                'imagePath' => $user->image ? $user->image->image_path : false,
                 'accessToken' => $accessToken,
             ];
 
@@ -122,7 +120,7 @@ class UserController extends BaseController
      *  @return \Illuminate\Http\Response
      */
 
-     public function updateUserInfo(Request $request,$userId):JsonResponse
+     public function updateUserData (Request $request,$userId):JsonResponse
      {
         
         try{
@@ -161,35 +159,30 @@ class UserController extends BaseController
                  endif;
  
                  // user password
-                 if ($request->filled('newpass') && $request->filled('currentpassword')):
+                 if ($request->filled('newpassword') && $request->filled('oldpassword')):
  
                      $request->validate([
-                         'currentpassword'=>'string',
-                         'newpass' => 'string',
+                         'oldpassword'=>'string',
+                         'newpassword' => 'string',
                      ]);
                       
-                     $isPassTrue = Hash::check($request['currentpassword'], $user->password);
+                     $isPassTrue = Hash::check($request['oldpassword'], $user->password);
                      
                      if($isPassTrue):
  
-                         $user->password = bcrypt($request->input('newpass'));
+                         $user->password = bcrypt($request->input('newpassword'));
                          $user->save();
      
                          $updatedFields[] = 'password';
                          
                      else:
                          $msg = 'Password is invalid';
-                         return response()->json([
-                             'msg' => $msg,
-                             'status'=>401,
-                              
-                         ]);
+
  
                      endif;
  
                  endif;
-                 // user image
-                //  if():
+               
 
 
 
@@ -199,26 +192,42 @@ class UserController extends BaseController
                  // keeping track of which fields have been updated to send it through the response to the client
                  if(!empty($updatedFields)):
  
-                      if(in_array('email',$updatedFields) && in_array('userfullname', $updatedFields) && in_array('password', $updatedFields)):
+                      if(in_array('email',$updatedFields) && in_array('fullname', $updatedFields) && in_array('password', $updatedFields)):
                              
                              $msg ='Your personal information has been successfully updated';
- 
-                             return response()->json([
-                                 'msg' => $msg,
-                                 'userData'=>$user,
-                                 'status' => 200,
-                             ]);
+                                
+
+                             $accessToken = $user->createToken('myapptoken')->plainTextToken;
+
+                             $fetchUser = [
+                                'id' => $user->id,
+                                'fullname' => $user->name,
+                                'email' => $user->email,
+                                'imagePath' => $user->image ? $user->image->image_path : false,
+                                'accessToken' => $accessToken,
+                            ];
+
+                            return $this->sendResponse($fetchUser,$msg,200);
+
+                           
                              
                       endif;
  
-                      if(in_array('userfullname', $updatedFields)):
+                      if(in_array('fullname', $updatedFields)):
                              $msg = 'Your full name has been successfully updated';
- 
-                             return response()->json([
-                                 'msg' => $msg,
-                                 'userData'=>$user,
-                                 'status' => 200,
-                             ]);;
+
+                             $accessToken = $user->createToken('myapptoken')->plainTextToken;
+
+                             $fetchUser = [
+                                'id' => $user->id,
+                                'fullname' => $user->name,
+                                'email' => $user->email,
+                                'imagePath' => $user->image ? $user->image->image_path : false,
+                                'accessToken' => $accessToken,
+                            ];
+                            
+                            return $this->sendResponse($fetchUser,$msg,200);
+
  
                       endif;
                       
@@ -226,22 +235,37 @@ class UserController extends BaseController
                          
                          $msg = 'Your email has been successfully updated';
  
-                         return response()->json([
-                                 'msg' => $msg,
-                                 'userData'=>$user,
-                                 'status' => 200,
-                             ]);
+                         $accessToken = $user->createToken('myapptoken')->plainTextToken;
+
+                         $fetchUser = [
+                            'id' => $user->id,
+                            'fullname' => $user->name,
+                            'email' => $user->email,
+                            'imagePath' => $user->image ? $user->image->image_path : false,
+                            'accessToken' => $accessToken,
+                        ];
+                        
+                        return $this->sendResponse($fetchUser,$msg,200);
+
+
  
                   endif;
  
                       if(in_array('password', $updatedFields)):
                          $msg = 'Your password has been successfully changed';
- 
-                         return response()->json([
-                             'msg' => $msg,
-                             'userData'=>$user,
-                             'status' => 200,
-                         ]);
+                         $accessToken = $user->createToken('myapptoken')->plainTextToken;
+
+                         $fetchUser = [
+                            'id' => $user->id,
+                            'fullname' => $user->name,
+                            'email' => $user->email,
+                            'imagePath' => $user->image ? $user->image->image_path : false,
+                            'accessToken' => $accessToken,
+                        ];
+                        
+                        return $this->sendResponse($fetchUser,$msg,200);
+
+
                          
                       endif;
                       

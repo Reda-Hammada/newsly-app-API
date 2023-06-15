@@ -51,7 +51,5 @@ class User extends Authenticatable
     public function preference(){
         return $this->HasMany(Preference::class);
     }
-    public function image(){
-        return $this->hasOne(Image::class);
-    }
+   
 }

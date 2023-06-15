@@ -16,7 +16,7 @@ class BaseController extends Controller
 
      public function sendResponse($result = null, string $message, int $status)
      {
-         $response =[
+         $response = [
                 'message' => $message,
                 'status'=> $status,
         ];

@@ -34,7 +34,7 @@ Route::controller(UserController::class)->group(function(){
 
 
 // guarded APIs routes
-Route::group(['middleware'=>['auth:sanctum','throttle:90,1']],function(){
+Route::group(['middleware'=>['auth:sanctum',]],function(){
     // user protected routes
     Route::put('/user/{userId}',[UserController::class, 'updateUserData']);
     // preferences routes
